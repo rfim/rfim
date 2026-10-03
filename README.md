@@ -6,6 +6,10 @@ I design platforms that stay trustworthy as they grow: contract-governed pipelin
 
 📍 London, UK · 🎓 MSc Computer Science (UVSQ, France) · 🧑‍🏫 Data Engineering instructor at HACKTIV8 since 2019
 
+[![Play Pipeline Rush](https://img.shields.io/badge/play-Pipeline%20Rush%20%F0%9F%8E%AE-e6b422?style=for-the-badge)](https://rfim.github.io/rfim/play/)
+
+🎮 **Pipeline Rush**: a 60-second game where you fix bad records between bronze and gold before the SLA runs out.
+
 ---
 
 ### 🧰 Toolkit
