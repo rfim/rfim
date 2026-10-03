@@ -10,6 +10,8 @@ I design platforms that stay trustworthy as they grow: contract-governed pipelin
 
 🎮 **Pipeline Rush**: a 60-second game where you fix bad records between bronze and gold before the SLA runs out.
 
+<a href="https://rfim.github.io/rfim/play/"><img src="play/screenshot.png" alt="Pipeline Rush gameplay: records moving from bronze through the silver gate to gold" width="680"></a>
+
 ---
 
 ### 🧰 Toolkit
