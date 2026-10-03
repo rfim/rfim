@@ -28,8 +28,11 @@ I design platforms that stay trustworthy as they grow: contract-governed pipelin
 **Orchestration & ops**<br>
 <img src="https://img.shields.io/badge/Airflow-017CEE?style=flat-square&logo=apacheairflow&logoColor=white" alt="Airflow"> <img src="https://img.shields.io/badge/Dagster-4F43DD?style=flat-square&logo=dagster&logoColor=white" alt="Dagster"> <img src="https://img.shields.io/badge/GitHub%20Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white" alt="GitHub Actions"> <img src="https://img.shields.io/badge/Terraform-844FBA?style=flat-square&logo=terraform&logoColor=white" alt="Terraform"> <img src="https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white" alt="Docker">
 
-**Quality & governance** &nbsp; data contracts · Great Expectations · Unity Catalog · lineage<br>
-**Modelling** &nbsp; Kimball dimensional · Data Vault · medallion
+**Quality & governance**<br>
+<img src="https://img.shields.io/badge/data%20contracts-enforced%20%E2%9C%93-2ea44f?style=flat-square&labelColor=2b3137" alt="data contracts: enforced ✓"> <img src="https://img.shields.io/badge/Great%20Expectations-all%20passing-ff6310?style=flat-square&labelColor=2b3137" alt="Great Expectations: all passing"> <img src="https://img.shields.io/badge/Unity%20Catalog-governed-FF3621?style=flat-square&labelColor=2b3137&logo=databricks&logoColor=white" alt="Unity Catalog: governed"> <img src="https://img.shields.io/badge/lineage-source%20%E2%86%92%20dashboard-6f42c1?style=flat-square&labelColor=2b3137" alt="lineage: source → dashboard">
+
+**Modelling**<br>
+<img src="https://img.shields.io/badge/Kimball-%E2%AD%90%20star%20schema-e6b422?style=flat-square&labelColor=2b3137" alt="Kimball: ⭐ star schema"> <img src="https://img.shields.io/badge/Data%20Vault-hubs%20%C2%B7%20links%20%C2%B7%20sats-0e7c86?style=flat-square&labelColor=2b3137" alt="Data Vault: hubs · links · sats"> <img src="https://img.shields.io/badge/medallion-%F0%9F%A5%89%20%E2%86%92%20%F0%9F%A5%88%20%E2%86%92%20%F0%9F%A5%87-b08d57?style=flat-square&labelColor=2b3137" alt="medallion: 🥉 → 🥈 → 🥇">
 
 ---
 
