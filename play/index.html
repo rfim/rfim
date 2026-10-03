@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pipeline Rush</title>
+<meta name="description" content="A tiny data engineering game: clean records from bronze to gold before the SLA runs out.">
+<style>
+:root{--bg:#0b0f17;--panel:#121826;--line:#1f2937;--txt:#e5e7eb;--mut:#8b95a7;--bronze:#c07a3e;--silver:#a8b3c2;--gold:#e6b422;--ok:#34d399;--bad:#f87171;--acc:#60a5fa}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font:15px/1.45 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+header{width:100%;max-width:960px;padding:18px 16px 6px;display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+h1{margin:0;font-size:22px;letter-spacing:.2px}
+h1 span{color:var(--gold)}
+.by{color:var(--mut);font-size:13px}.by a{color:var(--acc);text-decoration:none}
+.hud{width:100%;max-width:960px;padding:6px 16px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.stat b{display:block;font-size:20px;font-variant-numeric:tabular-nums}
+.stat small{color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:.6px}
+.sla{height:6px;background:var(--line);border-radius:4px;margin-top:6px;overflow:hidden}.sla i{display:block;height:100%;background:var(--ok);width:100%;transition:width .2s linear}
+#board{position:relative;width:calc(100% - 32px);max-width:928px;height:300px;margin:10px 16px;border-radius:14px;overflow:hidden;border:1px solid var(--line);display:grid;grid-template-columns:35% 30% 35%}
+.zone{position:relative;padding:8px 10px}
+.zone h3{margin:0;font-size:12px;letter-spacing:1.2px;text-transform:uppercase;opacity:.9}
+.z1{background:linear-gradient(180deg,rgba(192,122,62,.16),rgba(192,122,62,.05))}.z1 h3{color:var(--bronze)}
+.z2{background:linear-gradient(180deg,rgba(168,179,194,.18),rgba(168,179,194,.06));border-left:2px dashed rgba(168,179,194,.5);border-right:2px dashed rgba(168,179,194,.5)}.z2 h3{color:var(--silver)}
+.z3{background:linear-gradient(180deg,rgba(230,180,34,.16),rgba(230,180,34,.05))}.z3 h3{color:var(--gold)}
+.zone p{margin:2px 0 0;font-size:11px;color:var(--mut)}
+.rec{position:absolute;width:74px;height:46px;border-radius:9px;background:#1b2333;border:1.5px solid #334155;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;font-weight:600;transform:translate(-50%,-50%);transition:border-color .15s,background .15s,opacity .3s;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+.rec .ic{font-size:17px;line-height:1}
+.rec.target{border-color:var(--acc);box-shadow:0 0 0 3px rgba(96,165,250,.35)}
+.rec.fixed{border-color:var(--ok);background:#12301f}
+.rec.q{border-color:var(--mut);opacity:0;transform:translate(-50%,40px)}
+.rec.boom{border-color:var(--bad);background:#3a1418}
+.rec.gold{border-color:var(--gold);background:#3a2e0b}
+.float{position:absolute;font-weight:700;font-size:13px;pointer-events:none;animation:up .9s ease-out forwards;transform:translate(-50%,-50%)}
+@keyframes up{to{opacity:0;margin-top:-34px}}
+.keys{width:100%;max-width:960px;padding:4px 16px;display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.key{background:var(--panel);border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:10px 4px;cursor:pointer;font:inherit;display:flex;flex-direction:column;align-items:center;gap:2px;user-select:none}
+.key:hover{border-color:var(--acc)}.key:active{transform:translateY(1px)}
+.key kbd{font:600 12px ui-monospace,monospace;background:#0b1220;border:1px solid var(--line);border-radius:5px;padding:1px 6px;color:var(--acc)}
+.key span{font-size:12px}.key .ic{font-size:18px}
+.log{width:100%;max-width:960px;padding:8px 16px 24px;color:var(--mut);font-size:13px;min-height:44px}
+.overlay{position:fixed;inset:0;background:rgba(5,8,14,.86);display:flex;align-items:center;justify-content:center;padding:16px;z-index:9}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;max-width:520px;width:100%;padding:22px}
+.card h2{margin:0 0 6px;font-size:22px}.card p{margin:6px 0;color:#cbd5e1}
+.card table{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px}
+.card td{padding:5px 4px;border-bottom:1px solid var(--line)}.card td:first-child{width:34px;font-size:18px}
+.card td kbd{font:600 12px ui-monospace,monospace;color:var(--acc)}
+.btn{background:var(--gold);color:#1a1300;border:0;border-radius:10px;padding:11px 18px;font:700 15px inherit;cursor:pointer;margin-top:10px}
+.btn.alt{background:transparent;color:var(--txt);border:1px solid var(--line);margin-left:6px}
+.big{font-size:40px;font-weight:800;color:var(--gold);margin:4px 0}
+.hidden{display:none}
+@media (max-width:620px){#board{height:260px}.rec{width:58px;height:40px;font-size:10px}.hud{grid-template-columns:repeat(2,1fr)}.key span{font-size:10px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Pipeline <span>Rush</span></h1>
+  <div class="by">a tiny data engineering game by <a href="https://github.com/rfim">@rfim</a></div>
+</header>
+
+<div class="hud">
+  <div class="stat"><small>Rows in gold</small><b id="sGold">0</b></div>
+  <div class="stat"><small>Data quality</small><b id="sQual">100%</b></div>
+  <div class="stat"><small>Stakeholder trust</small><b id="sTrust">❤❤❤</b></div>
+  <div class="stat"><small>SLA window</small><b id="sTime">60s</b><div class="sla"><i id="slaBar"></i></div></div>
+</div>
+
+<div id="board">
+  <div class="zone z1"><h3>Bronze</h3><p>raw, untrusted</p></div>
+  <div class="zone z2"><h3>Silver gate</h3><p>fix it here</p></div>
+  <div class="zone z3"><h3>Gold</h3><p>stakeholders look here</p></div>
+</div>
+
+<div class="keys" id="keys"></div>
+<div class="log" id="log">Clean every record before it leaves the silver gate.</div>
+
+<div class="overlay" id="intro">
+  <div class="card">
+    <h2>Pipeline Rush</h2>
+    <p>Records land in <b style="color:var(--bronze)">bronze</b>. Each one may carry a defect. Fix it while it's in the <b style="color:var(--silver)">silver gate</b> (highlighted record) before it reaches <b style="color:var(--gold)">gold</b>.</p>
+    <table id="legend"></table>
+    <p>Clean records (✅) need nothing, so don't touch them. A wrong fix or a defect reaching gold costs stakeholder trust. Lose all three and the dashboard goes red.</p>
+    <p style="color:var(--mut);font-size:13px">Throughput ramps up. Survive the 60s SLA window.</p>
+    <button class="btn" id="startBtn">Start the batch ▶</button>
+  </div>
+</div>
+
+<div class="overlay hidden" id="end">
+  <div class="card">
+    <h2 id="endTitle">Batch complete</h2>
+    <div class="big" id="endScore">0</div>
+    <p id="endLine"></p>
+    <p id="endRank" style="color:var(--gold);font-weight:700"></p>
+    <button class="btn" id="againBtn">Rerun the DAG ↻</button>
+    <a class="btn alt" href="https://github.com/rfim" style="text-decoration:none;display:inline-block">Back to profile</a>
+  </div>
+</div>
+
+<script>
+const DEFECTS=[
+  {id:'dup',ic:'👯',label:'Duplicate',fix:'Dedupe',key:'d'},
+  {id:'null',ic:'🕳️',label:'Null key',fix:'Backfill',key:'n'},
+  {id:'schema',ic:'🧬',label:'Schema drift',fix:'Cast',key:'s'},
+  {id:'pii',ic:'🔓',label:'Raw PII',fix:'Mask',key:'p'},
+  {id:'bad',ic:'💀',label:'Corrupt',fix:'Quarantine',key:'q'},
+];
+const CLEAN={id:'ok',ic:'✅',label:'Clean'};
+const board=document.getElementById('board'),logEl=document.getElementById('log');
+const $=id=>document.getElementById(id);
+
+// legend + buttons
+$('legend').innerHTML=DEFECTS.map(d=>`<tr><td>${d.ic}</td><td>${d.label}</td><td>${d.fix} <kbd>${d.key.toUpperCase()}</kbd></td></tr>`).join('');
+$('keys').innerHTML=DEFECTS.map(d=>`<button class="key" data-k="${d.key}"><span class="ic">${d.ic}</span><span>${d.fix}</span><kbd>${d.key.toUpperCase()}</kbd></button>`).join('');
+$('keys').addEventListener('click',e=>{const b=e.target.closest('.key');if(b)act(b.dataset.k)});
+addEventListener('keydown',e=>{const k=e.key.toLowerCase();if(DEFECTS.some(d=>d.key===k)){e.preventDefault();act(k)}});
+
+let S;
+const GATE_IN=35,GATE_OUT=65,DURATION=60;
+function reset(){
+  board.querySelectorAll('.rec,.float').forEach(n=>n.remove());
+  S={recs:[],t:0,last:0,spawnIn:0.6,gold:0,good:0,bad:0,trust:3,running:true,seq:1000,streak:0,best:0};
+  hud();
+}
+function lanes(){return [0.35,0.62,0.86]}
+function spawn(){
+  const level=Math.min(1,S.t/DURATION);
+  const cleanP=0.3-level*0.12;
+  const d=Math.random()<cleanP?CLEAN:DEFECTS[Math.floor(Math.random()*DEFECTS.length)];
+  const lane=lanes()[Math.floor(Math.random()*3)];
+  const el=document.createElement('div');el.className='rec';
+  el.innerHTML=`<span class="ic">${d.ic}</span><span>#${S.seq++}</span>`;
+  board.appendChild(el);
+  S.recs.push({d,x:-4,y:lane,el,done:false,fixed:d===CLEAN,speed:13+level*10+Math.random()*2});
+}
+function target(){
+  // oldest unresolved defective record inside the gate
+  let best=null;
+  for(const r of S.recs){if(r.done||r.fixed)continue;if(r.x>=GATE_IN-4&&r.x<=GATE_OUT){if(!best||r.x>best.x)best=r}}
+  return best;
+}
+function floatText(r,txt,col){
+  const f=document.createElement('div');f.className='float';f.textContent=txt;f.style.color=col;
+  f.style.left=r.x+'%';f.style.top=(r.y*100-12)+'%';board.appendChild(f);setTimeout(()=>f.remove(),900);
+}
+function act(k){
+  if(!S||!S.running)return;
+  const r=target();
+  if(!r){
+    // pressing with nothing in the gate: touching a clean record?
+    const c=S.recs.find(r=>!r.done&&r.d===CLEAN&&r.x>=GATE_IN-4&&r.x<=GATE_OUT);
+    if(c){hit(c,'Over-engineered a clean record. Touch nothing that works.');}
+    else say('Nothing to fix in the gate yet.');
+    return;
+  }
+  const d=DEFECTS.find(d=>d.key===k);
+  if(r.d.key===k){
+    r.fixed=true;S.streak++;S.best=Math.max(S.best,S.streak);
+    if(k==='q'){r.done=true;r.el.classList.add('q');floatText(r,'quarantined','#8b95a7');S.good++;setTimeout(()=>r.el.remove(),300)}
+    else{r.el.classList.add('fixed');r.el.querySelector('.ic').textContent='✨';floatText(r,d.fix.toLowerCase()+'d','#34d399')}
+    say(praise());
+  }else{
+    hit(r,`${d.fix} on a ${r.d.label.toLowerCase()} record? That's how incidents start.`);
+  }
+  hud();
+}
+function hit(r,msg){
+  S.trust--;S.bad++;S.streak=0;r.done=true;r.el.classList.add('boom');floatText(r,'incident','#f87171');
+  setTimeout(()=>r.el.remove(),400);say('🚨 '+msg);hud();
+  if(S.trust<=0)finish(false);
+}
+const P=['Clean.','Nice catch.','Lineage intact.','Tests passing.','Data contract honoured.','Silver looking shiny.','Analysts rejoice.'];
+function praise(){return S.streak>=5?`🔥 ${S.streak} in a row. On-call could never.`:P[Math.floor(Math.random()*P.length)]}
+function say(t){logEl.textContent=t}
+function hud(){
+  $('sGold').textContent=S.gold;
+  const tot=S.good+S.bad;$('sQual').textContent=(tot?Math.round(100*S.good/tot):100)+'%';
+  $('sTrust').textContent='❤'.repeat(Math.max(0,S.trust))+'♡'.repeat(3-Math.max(0,S.trust));
+  const left=Math.max(0,DURATION-S.t);$('sTime').textContent=Math.ceil(left)+'s';
+  const bar=$('slaBar');bar.style.width=(100*left/DURATION)+'%';bar.style.background=left<10?'var(--bad)':left<25?'var(--gold)':'var(--ok)';
+}
+function tick(now){
+  if(!S.running)return;
+  const dt=Math.min(0.05,(now-(S.last||now))/1000);S.last=now;S.t+=dt;
+  S.spawnIn-=dt;
+  if(S.spawnIn<=0){spawn();const level=Math.min(1,S.t/DURATION);S.spawnIn=1.05-level*0.6+Math.random()*0.3}
+  const tg=target();
+  for(const r of S.recs){
+    if(r.done)continue;
+    r.x+=r.speed*dt;
+    r.el.style.left=r.x+'%';r.el.style.top=(r.y*100)+'%';
+    r.el.classList.toggle('target',r===tg);
+    if(r.x>GATE_OUT+2&&!r.fixed){hit(r,`A ${r.d.label.toLowerCase()} record leaked into gold. The CFO noticed.`);if(!S.running)return}
+    if(r.x>=101){r.done=true;r.el.remove();S.gold++;S.good++;hud()}
+    else if(r.x>GATE_OUT+2&&r.fixed&&!r.el.classList.contains('gold')){r.el.classList.add('gold')}
+  }
+  S.recs=S.recs.filter(r=>!r.done);
+  hud();
+  if(S.t>=DURATION){finish(true);return}
+  requestAnimationFrame(tick);
+}
+function finish(survived){
+  S.running=false;
+  const tot=S.good+S.bad,q=tot?Math.round(100*S.good/tot):100;
+  const score=S.gold*10+S.best*5+(survived?S.trust*50:0);
+  $('endTitle').textContent=survived?'SLA met. Batch complete ✅':'Dashboard is red 🚨';
+  $('endScore').textContent=score+' pts';
+  $('endLine').textContent=`${S.gold} rows delivered to gold · ${q}% data quality · best streak ${S.best}`;
+  const rank=!survived?'Rank: intern with prod access':score>=900?'Rank: Principal Data Engineer':score>=600?'Rank: Senior Data Engineer':score>=350?'Rank: Data Engineer':'Rank: SQL apprentice';
+  $('endRank').textContent=rank;
+  $('end').classList.remove('hidden');
+}
+function start(){$('intro').classList.add('hidden');$('end').classList.add('hidden');reset();say('Batch started. Fix the highlighted record.');requestAnimationFrame(t=>{S.last=t;tick(t)})}
+$('startBtn').onclick=start;$('againBtn').onclick=start;
+</script>
+</body>
+</html>
