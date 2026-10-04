@@ -12,11 +12,11 @@ I design platforms that stay trustworthy as they grow: contract-governed pipelin
 
 Source change → replay-safe capture → governed models → quality gates → trusted delivery. [Explore the interactive architecture and working code](https://rfim.github.io/nexus-73strings/).
 
-### The math behind trust
+[![Play Pipeline Rush](https://img.shields.io/badge/play-Pipeline%20Rush%20%F0%9F%8E%AE-e6b422?style=for-the-badge)](https://rfim.github.io/rfim/play/)
 
-<a href="https://rfim.github.io/nexus-73strings/#math"><img src="assets/nexus-math.gif" alt="Animated NEXUS equations for replay idempotence, row reconciliation, publication contracts and tenant-scoped delivery" width="960"></a>
+🎮 **Pipeline Rush**: a 60-second game where you fix bad records between bronze and gold before the SLA runs out.
 
-Four checks behind the moving pipeline: safe replay, accounted-for rows, contract-gated publication and client isolation. [Open the full equation accordion](https://rfim.github.io/nexus-73strings/#math).
+<a href="https://rfim.github.io/rfim/play/"><img src="play/screenshot.png" alt="Pipeline Rush gameplay: records moving from bronze through the silver gate to gold" width="680"></a>
 
 ---
 
