@@ -1,5 +1,7 @@
 ### hi, i'm vim 👋
 
+<a href="https://rfim.github.io/nexus-73strings/"><img src="assets/nexus-data-rescue.gif" alt="Animated NEXUS architecture: two valid records continue to delivery while one invalid record branches into quarantine, is corrected, and replays" width="960"></a>
+
 **Senior Data Engineer** in London. 10+ years building data platforms across insurance, fintech and enterprise, from Deloitte consulting to insurtech scale-ups.
 
 I design platforms that stay trustworthy as they grow: contract-governed pipelines, medallion lakehouses, CDC and streaming ingestion, and the CI/CD and quality checks that keep them honest. Lately I've been pairing that with AI: agentic ops, self-healing pipelines, and LLM interfaces over governed data.
@@ -8,7 +10,6 @@ I design platforms that stay trustworthy as they grow: contract-governed pipelin
 
 ### NEXUS — data in motion
 
-<a href="https://rfim.github.io/nexus-73strings/"><img src="assets/nexus-data-rescue.gif" alt="Animated NEXUS architecture: two valid records continue to delivery while one invalid record branches into quarantine, is corrected, and replays" width="960"></a>
 
 Three synthetic records show how valid updates keep moving while an exception waits for repair and safe replay. [Explore the interactive architecture and working code](https://rfim.github.io/nexus-73strings/).
 
