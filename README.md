@@ -4,9 +4,9 @@
 
 **I build data platforms that keep moving when real data gets messy.** I'm a Senior Data Engineer in London, with 10+ years across insurance, fintech and enterprise, from Deloitte consulting to insurtech scale-ups.
 
-A record fails validation while two others are ready to publish. I hold the exception with its reason, keep the valid records moving, and make replay safe. The examples below scale that idea from one stream to multi-tenant ingestion. My work spans contract-governed pipelines, lakehouses, streaming, quality checks, and AI-assisted operations.
+**The data journey starts with entropy.** A record fails validation while two others are ready to publish; duplicates and schema drift add more uncertainty. I hold the exception with its reason, keep valid records moving, and make replay safe. The examples below follow that pattern from one stream to multi-tenant ingestion.
 
-📍 London, UK · 🎓 MSc Computer Science (UVSQ, France) · 🧑‍🏫 Data Engineering instructor at HACKTIV8 since 2019
+As the signal becomes trustworthy, the business can ask better questions: what does a metric mean, who can see it, how fresh is it, and where did it come from? NEXUS Cortex sketches how those facts could become explainable answers.
 
 ### NEXUS — one bad row, no blocked batch
 
