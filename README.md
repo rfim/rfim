@@ -4,25 +4,25 @@
 
 **I build data platforms that keep moving when real data gets messy.** I'm a Senior Data Engineer in London, with 10+ years across insurance, fintech and enterprise, from Deloitte consulting to insurtech scale-ups.
 
-**The data journey starts with entropy.** A record fails validation while two others are ready to publish; duplicates and schema drift add more uncertainty. I hold the exception with its reason, keep valid records moving, and make replay safe. The examples below follow that pattern from one stream to multi-tenant ingestion.
+The tidy version of a data platform is simple: data arrives, a pipeline runs, and someone gets an answer. Real data is less considerate. A bad row arrives alongside good ones, an update comes twice, and a source adds a field nobody agreed to. Each small surprise adds entropy between an event and the business decision it is meant to support.
 
-As the signal becomes trustworthy, the business can ask better questions: what does a metric mean, who can see it, how fresh is it, and where did it come from? NEXUS Cortex sketches how those facts could become explainable answers.
+This is the NEXUS journey: keep trustworthy rows moving, hold exceptions with reasons, make replay safe, and give business questions a definition people can inspect. The examples use synthetic data; the engineering choices reflect the kinds of problems I have worked on. A neat demo is quick. Making its answer survive a Tuesday is the interesting part.
 
 ### NEXUS — one bad row, no blocked batch
 
-Two synthetic records pass validation and reach delivery. A third fails, is held with its reason, then is corrected and replayed. The clean records keep moving. [Explore the interactive architecture and working code](https://rfim.github.io/nexus-73strings/).
+We begin with three synthetic records. Two pass validation and reach delivery. The third is held with its reason, corrected, and replayed. The clean records keep moving while the exception gets attention; there is no need to make the whole batch wait while one row considers its options. [Explore the interactive architecture and working code](https://rfim.github.io/nexus-73strings/).
 
 ### One YAML — many ingestion routes
 
 <a href="https://github.com/rfim/rfim/blob/main/examples/multitenant-ingestion.yaml"><img src="assets/multitenant-ingestion.gif" alt="Animated multi-tenant ingestion design: one YAML file expands into three independently checkpointed tenant routes, each landing in Delta Bronze" width="960"></a>
 
-Now imagine that flow serving Aurora, Beacon and Cedar at once. One YAML defines each source, contract, secret reference, checkpoint, Bronze destination and quarantine path. In this synthetic design, a controller expands them into independent routes: Aurora can pause and replay while the others keep ingesting. [Inspect the example YAML](https://github.com/rfim/rfim/blob/main/examples/multitenant-ingestion.yaml).
+The next question is what happens when Aurora, Beacon and Cedar all need that flow. One YAML describes each source, contract, secret reference, checkpoint, Bronze destination and quarantine path. In this synthetic design, a controller turns those definitions into independent routes. Aurora can pause and replay without asking the other tenants to take the afternoon off. [Inspect the example YAML](https://github.com/rfim/rfim/blob/main/examples/multitenant-ingestion.yaml).
 
 #### CDC — when the source changes
 
 <a href="https://github.com/rfim/rfim/blob/main/examples/CDC_GUARDRAILS.md"><img src="assets/cdc-guardrails.gif" alt="Animated CDC design: one event is applied, a replay becomes a no-op, and a new personal field is held while AI drafts a metadata-only suggestion for human review" width="960"></a>
 
-Aurora's update is applied once. The same event arrives again and becomes a no-op; an older event cannot overwrite it. Then a new `customer_phone` field appears. Aurora's route holds at the contract gate while the other tenants continue. An AI advisory hook sees only the field and its type and drafts a classification; a reviewer decides whether to update the contract and replay. The runnable demo uses a mock suggestion. Privacy rules are explicit, with the wider GDPR assessment owned by the organisation.
+Aurora sends an update, then sends it again. The first event is applied; the repeat becomes a no-op, and an older event cannot overwrite newer state. Then `customer_phone` appears. Aurora's route holds at the contract gate while the other tenants continue. An AI advisory hook sees only the field name and type and drafts a classification. A reviewer decides whether to change the contract and replay. The runnable demo uses a mock suggestion; privacy rules are explicit, and the wider GDPR assessment belongs to the organisation.
 
 [Inspect the CDC design and runnable reference](https://github.com/rfim/rfim/blob/main/examples/CDC_GUARDRAILS.md).
 
@@ -30,19 +30,19 @@ Aurora's update is applied once. The same event arrives again and becomes a no-o
 
 <a href="https://github.com/rfim/rfim/blob/main/examples/NON_CDC_SELF_HEAL.md"><img src="assets/non-cdc-self-heal.gif" alt="Animated file ingestion design: an approved decimal cast repairs one row, an invalid value is quarantined, a repeat file is a no-op, and a new field is held for review" width="960"></a>
 
-Beacon's file arrives with three rows. A numeric string can be cast exactly under an approved rule, so that row continues. An invalid amount goes to quarantine with its reason; two rows reach Bronze. Retrying the same object version is a no-op. When the next file adds `customer_phone`, the route holds it for review. The mock AI hook sees only schema metadata and cannot approve a new field. [Inspect the YAML, design and runnable reference](https://github.com/rfim/rfim/blob/main/examples/NON_CDC_SELF_HEAL.md).
+Beacon sends files instead of change events. Of its three rows, one numeric string can be cast exactly under an approved rule, one invalid amount goes to quarantine with its reason, and two rows reach Bronze. Retrying the same object version is a no-op. The next file adds `customer_phone`, so the route holds it for review; the mock AI hook sees schema metadata but cannot approve the field. Boring rules are welcome where money is involved. [Inspect the YAML, design and runnable reference](https://github.com/rfim/rfim/blob/main/examples/NON_CDC_SELF_HEAL.md).
 
 ### NEXUS Cortex — from trusted rows to trusted answers
 
-<a href="https://github.com/rfim/rfim/blob/main/examples/NEXUS_CORTEX.md"><img src="assets/nexus-cortex-agumon.gif" alt="Synthetic NEXUS Cortex concept animation: Agumon answers a paid-orders question by resolving an approved metric, applying tenant scope, querying Gold, and showing evidence" width="960"></a>
+<a href="https://github.com/rfim/rfim/blob/main/examples/NEXUS_CORTEX.md"><img src="assets/nexus-cortex-agumon.gif" alt="Synthetic NEXUS Cortex concept animation: a yellow Agumon answers a paid-orders question by resolving an approved metric, applying tenant scope, querying Gold, and showing evidence" width="960"></a>
 
-What if NEXUS could explain the data it delivers? In this **design concept**, Agumon answers a synthetic question by resolving an approved metric, checking tenant access, querying Gold, and returning the definition, freshness, and lineage with the result. The chatbot and the number shown are illustrative, not a deployed service. [See how I would build the semantic layer](https://github.com/rfim/rfim/blob/main/examples/NEXUS_CORTEX.md).
+By now, the rows are more trustworthy. The business question is harder: does “paid orders” mean the same thing to everyone, and can we show where the answer came from? In this **design concept**, Agumon resolves an approved metric, checks tenant access, queries Gold, and returns the definition, freshness and lineage with a synthetic answer. The chatbot is illustrative, not a deployed service. [See how I would build the semantic layer](https://github.com/rfim/rfim/blob/main/examples/NEXUS_CORTEX.md).
 
 ### Your turn — Pipeline Rush
 
 <a href="https://rfim.github.io/rfim/play/"><img src="play/pipeline-rush-preview.gif" alt="Animated Pipeline Rush preview: clean records reach Gold, a duplicate is fixed at the Silver gate, and a corrupt row is quarantined" width="960"></a>
 
-Try the quality gate yourself: spot and fix bad records between Bronze and Gold before the 60-second SLA runs out.
+If you would rather meet the quality gate than read another paragraph about it, try spotting and fixing bad records between Bronze and Gold before the 60-second SLA runs out.
 
 [![Play Pipeline Rush](https://img.shields.io/badge/play-Pipeline%20Rush%20%F0%9F%8E%AE-e6b422?style=for-the-badge)](https://rfim.github.io/rfim/play/)
 

@@ -28,9 +28,10 @@ MUTED = (164, 181, 195)
 CYAN = (103, 218, 229)
 GREEN = (144, 222, 173)
 AMBER = (247, 191, 111)
-ORANGE = (246, 137, 62)
-ORANGE_LIGHT = (255, 181, 91)
-CREAM = (255, 228, 176)
+YELLOW = (246, 193, 45)
+YELLOW_LIGHT = (255, 222, 103)
+YELLOW_DARK = (175, 116, 25)
+EYE_GREEN = (79, 160, 143)
 
 
 def font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont:
@@ -71,7 +72,7 @@ def typed(value: str, frame: int, start: int, end: int) -> str:
 
 
 def agumon(draw: ImageDraw.ImageDraw, frame: int) -> None:
-    """Draw an original, simplified orange dinosaur fan sketch."""
+    """Draw a simplified yellow Agumon sketch based on the supplied reference."""
     bob = math.sin(frame * .22) * 3
     blink = frame % 43 in (29, 30)
     pulse = 4 + 5 * (0.5 + 0.5 * math.sin(frame * .32))
@@ -81,43 +82,67 @@ def agumon(draw: ImageDraw.ImageDraw, frame: int) -> None:
     draw.ellipse(xy((69, 124, 237, 292)), fill=(29, 62, 73))
     draw.ellipse(xy((90, 386, 218, 403)), fill=(11, 17, 25))
 
-    # Tail and compact body sit behind the large head.
-    polygon(draw, [(122, 312 + bob), (85, 319 + bob), (59, 301 + bob),
-                   (76, 343 + bob), (121, 356 + bob)], ORANGE, (181, 85, 41))
-    draw.ellipse(xy((108, 293 + bob, 213, 388 + bob)), fill=ORANGE,
-                 outline=(181, 85, 41), width=2 * SCALE)
-    draw.ellipse(xy((135, 314 + bob, 198, 374 + bob)), fill=CREAM)
-    polygon(draw, [(111, 357 + bob), (100, 374 + bob), (116, 382 + bob),
-                   (136, 376 + bob), (143, 351 + bob)], ORANGE, (181, 85, 41))
-    polygon(draw, [(183, 351 + bob), (192, 379 + bob), (212, 386 + bob),
-                   (223, 377 + bob), (211, 353 + bob)], ORANGE, (181, 85, 41))
+    # Tail and little limbs sit behind the oversized head.
+    polygon(draw, [(209, 317 + bob), (255, 336 + bob), (266, 354 + bob),
+                   (230, 346 + bob), (213, 365 + bob)], YELLOW, YELLOW_DARK)
+    draw.ellipse(xy((119, 287 + bob, 221, 383 + bob)), fill=YELLOW,
+                 outline=YELLOW_DARK, width=2 * SCALE)
+    draw.ellipse(xy((145, 320 + bob, 197, 375 + bob)), fill=(255, 208, 71))
+    polygon(draw, [(120, 342 + bob), (108, 371 + bob), (132, 386 + bob),
+                   (154, 377 + bob), (153, 347 + bob)], YELLOW, YELLOW_DARK)
+    polygon(draw, [(187, 348 + bob), (193, 379 + bob), (220, 388 + bob),
+                   (231, 373 + bob), (218, 343 + bob)], YELLOW, YELLOW_DARK)
+    for x, y in ((116, 374), (133, 379), (201, 381), (220, 380)):
+        polygon(draw, [(x - 6, y + bob), (x + 6, y + bob),
+                       (x + 1, y + 13 + bob)], TEXT)
+    # One raised hand gives the chatbot a small wave.
+    hand_lift = math.sin(frame * .22) * 5
+    polygon(draw, [(120, 311 + bob), (84, 330 + bob - hand_lift),
+                   (70, 312 + bob - hand_lift), (62, 337 + bob - hand_lift),
+                   (87, 359 + bob - hand_lift), (132, 339 + bob)],
+            YELLOW, YELLOW_DARK)
+    for x, y in ((62, 316), (72, 309), (83, 315)):
+        polygon(draw, [(x, y + bob - hand_lift),
+                       (x + 10, y + 5 + bob - hand_lift),
+                       (x - 2, y - 11 + bob - hand_lift)], TEXT)
 
-    # A friendly, distinct fan-art silhouette: round eyes, broad snout, little teeth.
-    polygon(draw, [(97, 195 + bob), (87, 154 + bob), (115, 171 + bob),
-                   (136, 126 + bob), (146, 169 + bob), (180, 123 + bob),
-                   (188, 172 + bob), (214, 154 + bob), (212, 195 + bob)],
-            ORANGE, (181, 85, 41))
-    draw.ellipse(xy((81, 168 + bob, 231, 311 + bob)), fill=ORANGE,
-                 outline=(181, 85, 41), width=2 * SCALE)
-    draw.ellipse(xy((104, 241 + bob, 229, 315 + bob)), fill=CREAM,
-                 outline=(189, 120, 71), width=2 * SCALE)
-    draw.ellipse(xy((110, 196 + bob, 153, 244 + bob)), fill=TEXT)
-    draw.ellipse(xy((169, 196 + bob, 212, 244 + bob)), fill=TEXT)
+    # The supplied Agumon has a long left-facing snout, rounded crest,
+    # one large green eye, white teeth and claws, and golden-yellow skin.
+    draw.ellipse(xy((113, 144 + bob, 253, 305 + bob)), fill=YELLOW,
+                 outline=YELLOW_DARK, width=2 * SCALE)
+    draw.ellipse(xy((119, 129 + bob, 177, 190 + bob)), fill=YELLOW)
+    draw.ellipse(xy((155, 144 + bob, 219, 194 + bob)), fill=YELLOW)
+    draw.ellipse(xy((196, 158 + bob, 246, 205 + bob)), fill=YELLOW)
+    polygon(draw, [(118, 155 + bob), (147, 132 + bob), (176, 145 + bob),
+                   (211, 156 + bob), (243, 182 + bob), (245, 225 + bob),
+                   (212, 252 + bob), (128, 233 + bob)], YELLOW)
+    draw.ellipse(xy((55, 202 + bob, 217, 306 + bob)), fill=(227, 163, 32),
+                 outline=YELLOW_DARK, width=2 * SCALE)
+    draw.ellipse(xy((46, 181 + bob, 198, 276 + bob)), fill=YELLOW,
+                 outline=YELLOW_DARK, width=2 * SCALE)
+    draw.ellipse(xy((69, 174 + bob, 202, 259 + bob)), fill=YELLOW)
+    draw.ellipse(xy((64, 190 + bob, 146, 224 + bob)), fill=YELLOW_LIGHT)
+    # Mouth line and the small alternating white teeth.
+    draw.arc(xy((53, 231 + bob, 234, 307 + bob)), 12, 163,
+             fill=(132, 84, 28), width=3 * SCALE)
+    for x, y in ((77, 271), (106, 281), (141, 288), (175, 292), (206, 287)):
+        polygon(draw, [(x - 7, y + bob), (x + 8, y + bob),
+                       (x + 1, y + 15 + bob)], TEXT)
+    draw.ellipse(xy((67, 216 + bob, 73, 229 + bob)), fill=(85, 61, 34))
+    draw.ellipse(xy((127, 231 + bob, 134, 240 + bob)), fill=(85, 61, 34))
+
+    # A single expressive eye makes the side profile read like the reference.
+    draw.ellipse(xy((183, 191 + bob, 246, 265 + bob)), fill=(48, 55, 50))
     if blink:
-        draw.line(xy((118, 223 + bob, 146, 223 + bob)), fill=(35, 42, 52), width=4 * SCALE)
-        draw.line(xy((177, 223 + bob, 205, 223 + bob)), fill=(35, 42, 52), width=4 * SCALE)
+        draw.ellipse(xy((186, 215 + bob, 244, 252 + bob)), fill=YELLOW)
+        draw.arc(xy((187, 216 + bob, 243, 248 + bob)), 10, 170,
+                 fill=(81, 68, 43), width=4 * SCALE)
     else:
-        draw.ellipse(xy((123, 205 + bob, 146, 237 + bob)), fill=(39, 88, 77))
-        draw.ellipse(xy((180, 205 + bob, 203, 237 + bob)), fill=(39, 88, 77))
-        draw.ellipse(xy((128, 207 + bob, 134, 215 + bob)), fill=TEXT)
-        draw.ellipse(xy((185, 207 + bob, 191, 215 + bob)), fill=TEXT)
-    draw.ellipse(xy((151, 261 + bob, 160, 269 + bob)), fill=(112, 71, 50))
-    draw.ellipse(xy((190, 261 + bob, 199, 269 + bob)), fill=(112, 71, 50))
-    draw.arc(xy((141, 265 + bob, 209, 302 + bob)), 8, 168,
-             fill=(112, 71, 50), width=3 * SCALE)
-    polygon(draw, [(152, 291 + bob), (158, 302 + bob), (164, 291 + bob)], TEXT)
-    polygon(draw, [(186, 292 + bob), (192, 303 + bob), (198, 290 + bob)], TEXT)
-    label(draw, 77, 417, "AGUMON", 18, ORANGE_LIGHT, True)
+        draw.ellipse(xy((188, 196 + bob, 242, 260 + bob)), fill=EYE_GREEN)
+        draw.ellipse(xy((194, 211 + bob, 228, 255 + bob)), fill=(40, 72, 57))
+        draw.ellipse(xy((200, 198 + bob, 216, 216 + bob)), fill=TEXT)
+        draw.ellipse(xy((224, 238 + bob, 233, 248 + bob)), fill=TEXT)
+    label(draw, 77, 417, "AGUMON", 18, YELLOW_LIGHT, True)
     label(draw, 77, 441, "semantic guide · concept", 11, MUTED)
 
 
@@ -164,7 +189,7 @@ def render(frame: int) -> Image.Image:
         polygon(draw, [(x + 5, 231), (x + 11, 235), (x + 5, 239)],
                 CYAN if active >= 1 else EDGE)
 
-    label(draw, 343, 282, "AGUMON ANSWERS", 11, ORANGE_LIGHT, True)
+    label(draw, 343, 282, "AGUMON ANSWERS", 11, YELLOW_LIGHT, True)
     rounded(draw, (342, 305, 919, 444), (29, 46, 58),
             GREEN if frame >= 39 else EDGE, 11, 2 if frame >= 39 else 1)
     if frame < 31:
