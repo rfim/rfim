@@ -38,13 +38,15 @@ Beacon sends files instead of change events. Of its three rows, one numeric stri
 
 By now, the rows are more trustworthy. The business question is harder: does “paid orders” mean the same thing to everyone, and can we show where the answer came from? In this **design concept**, Agumon resolves an approved metric, checks tenant access, queries Gold, and returns the definition, freshness and lineage with a synthetic answer. The chatbot is illustrative, not a deployed service. [See how I would build the semantic layer](https://github.com/rfim/rfim/blob/main/examples/NEXUS_CORTEX.md).
 
-### Your turn — Pipeline Rush
+---
 
-<a href="https://rfim.github.io/rfim/play/"><img src="play/pipeline-rush-preview.gif" alt="Animated Pipeline Rush preview: clean records reach Gold, a duplicate is fixed at the Silver gate, and a corrupt row is quarantined" width="960"></a>
+## Your turn — Pipeline Rush
 
-If you would rather meet the quality gate than read another paragraph about it, try spotting and fixing bad records between Bronze and Gold before the 60-second SLA runs out.
+<a href="https://rfim.github.io/rfim/play/"><img src="play/pipeline-rush-preview.gif" alt="Animated Pipeline Rush preview: clean records reach Gold, a duplicate is fixed at the Silver gate, and a corrupt row is quarantined" width="100%"></a>
 
-[![Play Pipeline Rush](https://img.shields.io/badge/play-Pipeline%20Rush%20%F0%9F%8E%AE-e6b422?style=for-the-badge)](https://rfim.github.io/rfim/play/)
+**60 seconds. Keep Gold clean.** Catch the duplicate, quarantine the corrupt row, and move the good data through before the SLA clock hits zero.
+
+[![Start Pipeline Rush](https://img.shields.io/badge/START-PIPELINE%20RUSH-e6b422?style=for-the-badge&labelColor=111827)](https://rfim.github.io/rfim/play/)
 
 ---
 

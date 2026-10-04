@@ -13,7 +13,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "play" / "pipeline-rush-preview.gif"
-WIDTH, HEIGHT, SCALE = 960, 525, 2
+WIDTH, HEIGHT, SCALE = 960, 600, 2
 FRAMES, DURATION_MS = 60, 100
 FONT_FILE = Path("/System/Library/Fonts/Avenir Next.ttc")
 if not FONT_FILE.exists():
@@ -60,16 +60,16 @@ def card(draw: ImageDraw.ImageDraw, x: float, y: float, number: str,
     color = {"raw": BLUE, "target": BLUE, "fixed": GREEN,
              "gold": GOLD, "bad": RED}.get(state, BLUE)
     if state == "target" or accent:
-        draw.rounded_rectangle(box((x - 41, y - 30, x + 41, y + 30)),
+        draw.rounded_rectangle(box((x - 52, y - 38, x + 52, y + 38)),
                                radius=10 * SCALE, fill=(35, 55, 79),
                                outline=(55, 99, 150), width=3 * SCALE)
     fill = (33, 41, 60) if state in {"raw", "target"} else (
         (28, 58, 53) if state == "fixed" else
         (57, 48, 29) if state == "gold" else (63, 35, 45))
-    draw.rounded_rectangle(box((x - 37, y - 26, x + 37, y + 26)),
-                           radius=8 * SCALE, fill=fill, outline=color,
+    draw.rounded_rectangle(box((x - 47, y - 33, x + 47, y + 33)),
+                           radius=10 * SCALE, fill=fill, outline=color,
                            width=2 * SCALE)
-    cy = y - 9
+    cy = y - 11
     if state == "raw":
         draw.ellipse(box((x - 4, cy - 4, x + 4, cy + 4)), fill=color)
     elif state == "target":
@@ -85,7 +85,7 @@ def card(draw: ImageDraw.ImageDraw, x: float, y: float, number: str,
     else:
         draw.line(box((x, cy - 6, x, cy + 2)), fill=color, width=3 * SCALE)
         draw.ellipse(box((x - 1.5, cy + 5, x + 1.5, cy + 8)), fill=color)
-    label(draw, x, y + 12, f"#{number}", 11, TEXT, True, "mm")
+    label(draw, x, y + 16, f"#{number}", 13, TEXT, True, "mm")
 
 
 def render(frame: int) -> Image.Image:
@@ -118,26 +118,26 @@ def render(frame: int) -> Image.Image:
                            radius=3 * SCALE, fill=GREEN)
 
     # Three zones use the same proportions and labels as the playable game.
-    draw.rounded_rectangle(box((18, 149, 942, 394)), radius=12 * SCALE,
+    draw.rounded_rectangle(box((18, 149, 942, 465)), radius=12 * SCALE,
                            fill=(21, 23, 29), outline=EDGE, width=SCALE)
-    draw.rectangle(box((19, 150, 342, 393)), fill=(37, 30, 29))
-    draw.rectangle(box((342, 150, 619, 393)), fill=(28, 36, 49))
-    draw.rectangle(box((619, 150, 941, 393)), fill=(37, 35, 25))
+    draw.rectangle(box((19, 150, 342, 464)), fill=(37, 30, 29))
+    draw.rectangle(box((342, 150, 619, 464)), fill=(28, 36, 49))
+    draw.rectangle(box((619, 150, 941, 464)), fill=(37, 35, 25))
     for x in (342, 619):
-        for y in range(150, 394, 12):
-            draw.line(box((x, y, x, min(y + 6, 394))),
+        for y in range(150, 465, 12):
+            draw.line(box((x, y, x, min(y + 6, 465))),
                       fill=(101, 110, 126), width=2 * SCALE)
-    label(draw, 30, 162, "BRONZE", 14, BRONZE, True)
-    label(draw, 30, 184, "raw, untrusted", 12, MUTED)
-    label(draw, 354, 162, "SILVER GATE", 14, SILVER, True)
-    label(draw, 354, 184, "fix it here", 12, MUTED)
-    label(draw, 631, 162, "GOLD", 14, GOLD, True)
-    label(draw, 631, 184, "stakeholders look here", 12, MUTED)
+    label(draw, 30, 162, "BRONZE", 16, BRONZE, True)
+    label(draw, 30, 187, "raw, untrusted", 13, MUTED)
+    label(draw, 354, 162, "SILVER GATE", 16, SILVER, True)
+    label(draw, 354, 187, "fix it here", 13, MUTED)
+    label(draw, 631, 162, "GOLD", 16, GOLD, True)
+    label(draw, 631, 187, "stakeholders look here", 13, MUTED)
 
     # One clean row; one duplicate repaired in Silver; one bad row quarantined.
     clean_x = 65 + 805 * progress(frame, 0, 52)
     if frame <= 55:
-        card(draw, clean_x, 268, "1007", "gold" if clean_x >= 619 else "raw")
+        card(draw, clean_x, 306, "1007", "gold" if clean_x >= 619 else "raw")
 
     if frame >= 6:
         if frame <= 34:
@@ -149,38 +149,38 @@ def render(frame: int) -> Image.Image:
         if frame <= 59:
             duplicate_state = ("raw" if frame < 34 else "target" if frame < 42
                                else "fixed" if duplicate_x < 619 else "gold")
-            card(draw, duplicate_x, 334, "1008", duplicate_state,
+            card(draw, duplicate_x, 387, "1008", duplicate_state,
                  accent=34 <= frame < 42)
 
     if frame >= 14:
         if frame <= 48:
             bad_x = 65 + 478 * smooth(progress(frame, 14, 48))
-            bad_y = 235
+            bad_y = 245
         else:
             bad_x = 543
-            bad_y = 235 + 75 * smooth(progress(frame, 52, 56))
+            bad_y = 245 + 161 * smooth(progress(frame, 52, 56))
         if frame < 56:
             card(draw, bad_x, bad_y, "1009",
                  "raw" if frame < 48 else "bad", accent=48 <= frame < 53)
         else:
-            draw.rounded_rectangle(box((468, 342, 606, 372)), radius=7 * SCALE,
+            draw.rounded_rectangle(box((454, 428, 620, 457)), radius=7 * SCALE,
                                    fill=(63, 35, 45), outline=RED, width=SCALE)
-            label(draw, 537, 350, "QUARANTINED", 12, RED, True, "mt")
+            label(draw, 537, 435, "QUARANTINED", 13, RED, True, "mt")
 
     action_titles = [("D", "Dedupe"), ("N", "Backfill"),
                      ("S", "Cast"), ("P", "Mask"), ("Q", "Quarantine")]
     for index, (key, title) in enumerate(action_titles):
         x = 18 + index * 187
         active = (index == 0 and 34 <= frame <= 43) or (index == 4 and 50 <= frame <= 58)
-        draw.rounded_rectangle(box((x, 408, x + 176, 474)), radius=9 * SCALE,
+        draw.rounded_rectangle(box((x, 480, x + 176, 550)), radius=9 * SCALE,
                                fill=(28, 47, 58) if active else PANEL,
                                outline=GREEN if active else EDGE,
                                width=(2 if active else 1) * SCALE)
-        label(draw, x + 88, 418, title, 14, TEXT, True, "mt")
-        draw.rounded_rectangle(box((x + 76, 447, x + 100, 468)),
+        label(draw, x + 88, 491, title, 15, TEXT, True, "mt")
+        draw.rounded_rectangle(box((x + 76, 522, x + 100, 543)),
                                radius=4 * SCALE, fill=(12, 17, 28),
                                outline=BLUE if active else EDGE, width=SCALE)
-        label(draw, x + 88, 452, key, 12, BLUE, True, "mt")
+        label(draw, x + 88, 527, key, 12, BLUE, True, "mt")
 
     if frame < 33:
         message = "Keep clean records moving. Catch bad data at the Silver gate."
@@ -192,8 +192,8 @@ def render(frame: int) -> Image.Image:
         message = "Corrupt #1009 detected  >  Quarantine [Q]"
     else:
         message = "#1009 held safely. Stakeholder trust intact."
-    label(draw, 20, 489, message, 14, GREEN if frame >= 42 else MUTED)
-    label(draw, 764, 492, "PLAY THE GAME  >", 11, BLUE, True)
+    label(draw, 20, 567, message, 14, GREEN if frame >= 42 else MUTED)
+    label(draw, 738, 569, "TAKE THE CHALLENGE  >", 11, BLUE, True)
 
     return image.resize((WIDTH, HEIGHT), Image.Resampling.LANCZOS)
 
