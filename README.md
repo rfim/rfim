@@ -19,9 +19,11 @@ Three synthetic records show how valid updates keep moving while an exception wa
 
 One config can define each tenant's source, contract, secret reference, checkpoint, Bronze destination and quarantine path. A controller validates it, then runs each tenant and dataset route independently so one tenant can be replayed without resetting the others. [Inspect the example YAML](https://github.com/rfim/rfim/blob/main/examples/multitenant-ingestion.yaml). This is a synthetic architecture sketch.
 
-**CDC guardrails:** in this reference design, the Postgres route handles duplicate and older events, holds schema changes for review, and keeps unapproved fields out of the curated path. An AI advisory hook receives only a schema diff; the runnable demo uses a mock suggestion, and a reviewer decides whether to change the contract. Privacy controls are explicit rules, with the wider GDPR assessment owned by the organisation.
+#### CDC guardrails
 
 <a href="https://github.com/rfim/rfim/blob/main/examples/CDC_GUARDRAILS.md"><img src="assets/cdc-guardrails.gif" alt="Animated CDC design: one event is applied, a replay becomes a no-op, and a new personal field is held while AI drafts a metadata-only suggestion for human review" width="960"></a>
+
+In this reference design, the Postgres route handles duplicate and older events, holds schema changes for review, and keeps unapproved fields out of the curated path. An AI advisory hook receives only a schema diff; the runnable demo uses a mock suggestion, and a reviewer decides whether to change the contract. Privacy controls are explicit rules, with the wider GDPR assessment owned by the organisation.
 
 [Inspect the CDC design and runnable reference](https://github.com/rfim/rfim/blob/main/examples/CDC_GUARDRAILS.md).
 
