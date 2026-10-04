@@ -16,6 +16,24 @@ tenants:
           connection_secret: secrets/aurora/postgres
           table: public.orders
           cursor: lsn
+          transaction_metadata: true
+        cdc:
+          primary_key: id
+          event_identity: [source, table, lsn, transaction_id, event_order, primary_key]
+          ordering: [lsn, event_order]
+          on_schema_change: hold_route_for_review
+          auto_evolve: false
+          contract_fields:
+            id: integer
+            amount: number
+            status: string
+        privacy:
+          purpose: operations_analytics
+          approved_fields: [id, amount, status]
+          unknown_field_action: hold_route_for_review
+          ai_advisory:
+            input: schema_metadata_only
+            auto_approve: false
         contract: contracts/orders/v1
         checkpoint: checkpoints/aurora/orders
         bronze_path: bronze/aurora/orders
