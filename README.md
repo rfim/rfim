@@ -12,6 +12,12 @@ I design platforms that stay trustworthy as they grow: contract-governed pipelin
 
 Three synthetic records show how valid updates keep moving while an exception waits for repair and safe replay. [Explore the interactive architecture and working code](https://rfim.github.io/nexus-73strings/).
 
+### One YAML, many ingestion routes
+
+<a href="https://github.com/rfim/rfim/blob/main/examples/multitenant-ingestion.yaml"><img src="assets/multitenant-ingestion.gif" alt="Animated multi-tenant ingestion design: one YAML file expands into three independently checkpointed tenant routes, each landing in Delta Bronze" width="960"></a>
+
+One config can define each tenant's source, contract, secret reference, checkpoint, Bronze destination and quarantine path. A controller validates it, then runs each tenant and dataset route independently so one tenant can be replayed without resetting the others. [Inspect the example YAML](https://github.com/rfim/rfim/blob/main/examples/multitenant-ingestion.yaml). This is a synthetic architecture sketch.
+
 [![Play Pipeline Rush](https://img.shields.io/badge/play-Pipeline%20Rush%20%F0%9F%8E%AE-e6b422?style=for-the-badge)](https://rfim.github.io/rfim/play/)
 
 🎮 **Pipeline Rush**: a 60-second game where you fix bad records between bronze and gold before the SLA runs out.

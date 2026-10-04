@@ -1,0 +1,46 @@
+# Synthetic architecture example. Paths and secret references are placeholders.
+# A controller validates this file, then starts one independently checkpointed
+# route for each (tenant, dataset) entry.
+version: 1
+defaults:
+  target_format: delta
+  layer: bronze
+  schema_drift: quarantine
+  retry_limit: 3
+tenants:
+  - id: aurora
+    datasets:
+      - name: orders
+        source:
+          type: postgres_cdc
+          connection_secret: secrets/aurora/postgres
+          table: public.orders
+          cursor: lsn
+        contract: contracts/orders/v1
+        checkpoint: checkpoints/aurora/orders
+        bronze_path: bronze/aurora/orders
+        quarantine_path: quarantine/aurora/orders
+  - id: beacon
+    datasets:
+      - name: orders
+        source:
+          type: s3_files
+          connection_secret: secrets/beacon/s3
+          prefix: s3://beacon-inbox/orders/
+          file_format: json
+        contract: contracts/orders/v1
+        checkpoint: checkpoints/beacon/orders
+        bronze_path: bronze/beacon/orders
+        quarantine_path: quarantine/beacon/orders
+  - id: cedar
+    datasets:
+      - name: accounts
+        source:
+          type: rest_api
+          connection_secret: secrets/cedar/api
+          endpoint: /v1/accounts
+          cursor: updated_at
+        contract: contracts/accounts/v1
+        checkpoint: checkpoints/cedar/accounts
+        bronze_path: bronze/cedar/accounts
+        quarantine_path: quarantine/cedar/accounts
