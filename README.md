@@ -8,9 +8,9 @@ I design platforms that stay trustworthy as they grow: contract-governed pipelin
 
 ### NEXUS — data in motion
 
-<a href="https://rfim.github.io/nexus-73strings/"><img src="assets/nexus-pipeline.gif" alt="Animated NEXUS architecture: a pulse moves from PostgreSQL and APIs through Debezium, Kafka, Databricks, Delta and quality checks to client datasets" width="960"></a>
+<a href="https://rfim.github.io/nexus-73strings/"><img src="assets/nexus-data-rescue.gif" alt="Animated NEXUS architecture: two valid records continue to delivery while one invalid record branches into quarantine, is corrected, and replays" width="960"></a>
 
-Source change → replay-safe capture → governed models → quality gates → trusted delivery. [Explore the interactive architecture and working code](https://rfim.github.io/nexus-73strings/).
+Three synthetic records show how valid updates keep moving while an exception waits for repair and safe replay. [Explore the interactive architecture and working code](https://rfim.github.io/nexus-73strings/).
 
 [![Play Pipeline Rush](https://img.shields.io/badge/play-Pipeline%20Rush%20%F0%9F%8E%AE-e6b422?style=for-the-badge)](https://rfim.github.io/rfim/play/)
 
