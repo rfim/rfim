@@ -2,36 +2,37 @@
 
 <a href="https://rfim.github.io/nexus-73strings/"><img src="assets/nexus-data-rescue.gif" alt="Animated NEXUS architecture: two valid records continue to delivery while one invalid record branches into quarantine, is corrected, and replays" width="960"></a>
 
-**Senior Data Engineer** in London. 10+ years building data platforms across insurance, fintech and enterprise, from Deloitte consulting to insurtech scale-ups.
+**I build data platforms that keep moving when real data gets messy.** I'm a Senior Data Engineer in London, with 10+ years across insurance, fintech and enterprise, from Deloitte consulting to insurtech scale-ups.
 
-I design platforms that stay trustworthy as they grow: contract-governed pipelines, medallion lakehouses, CDC and streaming ingestion, and the CI/CD and quality checks that keep them honest. Lately I've been pairing that with AI: agentic ops, self-healing pipelines, and LLM interfaces over governed data.
+A record fails validation while two others are ready to publish. I hold the exception with its reason, keep the valid records moving, and make replay safe. The examples below scale that idea from one stream to multi-tenant CDC. My work spans contract-governed pipelines, lakehouses, streaming, quality checks, and AI-assisted operations.
 
 📍 London, UK · 🎓 MSc Computer Science (UVSQ, France) · 🧑‍🏫 Data Engineering instructor at HACKTIV8 since 2019
 
-### NEXUS — data in motion
+### NEXUS — one bad row, no blocked batch
 
+Two synthetic records pass validation and reach delivery. A third fails, is held with its reason, then is corrected and replayed. The clean records keep moving. [Explore the interactive architecture and working code](https://rfim.github.io/nexus-73strings/).
 
-Three synthetic records show how valid updates keep moving while an exception waits for repair and safe replay. [Explore the interactive architecture and working code](https://rfim.github.io/nexus-73strings/).
-
-### One YAML, many ingestion routes
+### One YAML — many ingestion routes
 
 <a href="https://github.com/rfim/rfim/blob/main/examples/multitenant-ingestion.yaml"><img src="assets/multitenant-ingestion.gif" alt="Animated multi-tenant ingestion design: one YAML file expands into three independently checkpointed tenant routes, each landing in Delta Bronze" width="960"></a>
 
-One config can define each tenant's source, contract, secret reference, checkpoint, Bronze destination and quarantine path. A controller validates it, then runs each tenant and dataset route independently so one tenant can be replayed without resetting the others. [Inspect the example YAML](https://github.com/rfim/rfim/blob/main/examples/multitenant-ingestion.yaml). This is a synthetic architecture sketch.
+Now imagine that flow serving Aurora, Beacon and Cedar at once. One YAML defines each source, contract, secret reference, checkpoint, Bronze destination and quarantine path. In this synthetic design, a controller expands them into independent routes: Aurora can pause and replay while the others keep ingesting. [Inspect the example YAML](https://github.com/rfim/rfim/blob/main/examples/multitenant-ingestion.yaml).
 
-#### CDC guardrails
+#### CDC — when the source changes
 
 <a href="https://github.com/rfim/rfim/blob/main/examples/CDC_GUARDRAILS.md"><img src="assets/cdc-guardrails.gif" alt="Animated CDC design: one event is applied, a replay becomes a no-op, and a new personal field is held while AI drafts a metadata-only suggestion for human review" width="960"></a>
 
-In this reference design, the Postgres route handles duplicate and older events, holds schema changes for review, and keeps unapproved fields out of the curated path. An AI advisory hook receives only a schema diff; the runnable demo uses a mock suggestion, and a reviewer decides whether to change the contract. Privacy controls are explicit rules, with the wider GDPR assessment owned by the organisation.
+Aurora's update is applied once. The same event arrives again and becomes a no-op; an older event cannot overwrite it. Then a new `customer_phone` field appears. Aurora's route holds at the contract gate while the other tenants continue. An AI advisory hook sees only the field and its type and drafts a classification; a reviewer decides whether to update the contract and replay. The runnable demo uses a mock suggestion. Privacy rules are explicit, with the wider GDPR assessment owned by the organisation.
 
 [Inspect the CDC design and runnable reference](https://github.com/rfim/rfim/blob/main/examples/CDC_GUARDRAILS.md).
 
-[![Play Pipeline Rush](https://img.shields.io/badge/play-Pipeline%20Rush%20%F0%9F%8E%AE-e6b422?style=for-the-badge)](https://rfim.github.io/rfim/play/)
-
-🎮 **Pipeline Rush**: a 60-second game where you fix bad records between bronze and gold before the SLA runs out.
+### Your turn — Pipeline Rush
 
 <a href="https://rfim.github.io/rfim/play/"><img src="play/pipeline-rush-preview.gif" alt="Animated Pipeline Rush preview: clean records reach Gold, a duplicate is fixed at the Silver gate, and a corrupt row is quarantined" width="680"></a>
+
+Try the quality gate yourself: spot and fix bad records between Bronze and Gold before the 60-second SLA runs out.
+
+[![Play Pipeline Rush](https://img.shields.io/badge/play-Pipeline%20Rush%20%F0%9F%8E%AE-e6b422?style=for-the-badge)](https://rfim.github.io/rfim/play/)
 
 ---
 
