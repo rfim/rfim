@@ -32,9 +32,15 @@ Aurora's update is applied once. The same event arrives again and becomes a no-o
 
 Beacon's file arrives with three rows. A numeric string can be cast exactly under an approved rule, so that row continues. An invalid amount goes to quarantine with its reason; two rows reach Bronze. Retrying the same object version is a no-op. When the next file adds `customer_phone`, the route holds it for review. The mock AI hook sees only schema metadata and cannot approve a new field. [Inspect the YAML, design and runnable reference](https://github.com/rfim/rfim/blob/main/examples/NON_CDC_SELF_HEAL.md).
 
+### NEXUS Cortex — from trusted rows to trusted answers
+
+<a href="https://github.com/rfim/rfim/blob/main/examples/NEXUS_CORTEX.md"><img src="assets/nexus-cortex-agumon.gif" alt="Synthetic NEXUS Cortex concept animation: Agumon answers a paid-orders question by resolving an approved metric, applying tenant scope, querying Gold, and showing evidence" width="960"></a>
+
+What if NEXUS could explain the data it delivers? In this **design concept**, Agumon answers a synthetic question by resolving an approved metric, checking tenant access, querying Gold, and returning the definition, freshness, and lineage with the result. The chatbot and the number shown are illustrative, not a deployed service. [See how I would build the semantic layer](https://github.com/rfim/rfim/blob/main/examples/NEXUS_CORTEX.md).
+
 ### Your turn — Pipeline Rush
 
-<a href="https://rfim.github.io/rfim/play/"><img src="play/pipeline-rush-preview.gif" alt="Animated Pipeline Rush preview: clean records reach Gold, a duplicate is fixed at the Silver gate, and a corrupt row is quarantined" width="680"></a>
+<a href="https://rfim.github.io/rfim/play/"><img src="play/pipeline-rush-preview.gif" alt="Animated Pipeline Rush preview: clean records reach Gold, a duplicate is fixed at the Silver gate, and a corrupt row is quarantined" width="960"></a>
 
 Try the quality gate yourself: spot and fix bad records between Bronze and Gold before the 60-second SLA runs out.
 
