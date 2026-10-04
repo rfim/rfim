@@ -16,7 +16,7 @@ Three synthetic records show how valid updates keep moving while an exception wa
 
 🎮 **Pipeline Rush**: a 60-second game where you fix bad records between bronze and gold before the SLA runs out.
 
-<a href="https://rfim.github.io/rfim/play/"><img src="play/screenshot.png" alt="Pipeline Rush gameplay: records moving from bronze through the silver gate to gold" width="680"></a>
+<a href="https://rfim.github.io/rfim/play/"><img src="play/pipeline-rush-preview.gif" alt="Animated Pipeline Rush preview: clean records reach Gold, a duplicate is fixed at the Silver gate, and a corrupt row is quarantined" width="680"></a>
 
 ---
 
