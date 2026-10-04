@@ -4,7 +4,7 @@
 
 **I build data platforms that keep moving when real data gets messy.** I'm a Senior Data Engineer in London, with 10+ years across insurance, fintech and enterprise, from Deloitte consulting to insurtech scale-ups.
 
-A record fails validation while two others are ready to publish. I hold the exception with its reason, keep the valid records moving, and make replay safe. The examples below scale that idea from one stream to multi-tenant CDC. My work spans contract-governed pipelines, lakehouses, streaming, quality checks, and AI-assisted operations.
+A record fails validation while two others are ready to publish. I hold the exception with its reason, keep the valid records moving, and make replay safe. The examples below scale that idea from one stream to multi-tenant ingestion. My work spans contract-governed pipelines, lakehouses, streaming, quality checks, and AI-assisted operations.
 
 📍 London, UK · 🎓 MSc Computer Science (UVSQ, France) · 🧑‍🏫 Data Engineering instructor at HACKTIV8 since 2019
 
@@ -25,6 +25,12 @@ Now imagine that flow serving Aurora, Beacon and Cedar at once. One YAML defines
 Aurora's update is applied once. The same event arrives again and becomes a no-op; an older event cannot overwrite it. Then a new `customer_phone` field appears. Aurora's route holds at the contract gate while the other tenants continue. An AI advisory hook sees only the field and its type and drafts a classification; a reviewer decides whether to update the contract and replay. The runnable demo uses a mock suggestion. Privacy rules are explicit, with the wider GDPR assessment owned by the organisation.
 
 [Inspect the CDC design and runnable reference](https://github.com/rfim/rfim/blob/main/examples/CDC_GUARDRAILS.md).
+
+#### Non-CDC — safe self-healing
+
+<a href="https://github.com/rfim/rfim/blob/main/examples/NON_CDC_SELF_HEAL.md"><img src="assets/non-cdc-self-heal.gif" alt="Animated file ingestion design: an approved decimal cast repairs one row, an invalid value is quarantined, a repeat file is a no-op, and a new field is held for review" width="960"></a>
+
+Beacon's file arrives with three rows. A numeric string can be cast exactly under an approved rule, so that row continues. An invalid amount goes to quarantine with its reason; two rows reach Bronze. Retrying the same object version is a no-op. When the next file adds `customer_phone`, the route holds it for review. The mock AI hook sees only schema metadata and cannot approve a new field. [Inspect the YAML, design and runnable reference](https://github.com/rfim/rfim/blob/main/examples/NON_CDC_SELF_HEAL.md).
 
 ### Your turn — Pipeline Rush
 

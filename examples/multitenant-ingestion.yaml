@@ -46,6 +46,25 @@ tenants:
           connection_secret: secrets/beacon/s3
           prefix: s3://beacon-inbox/orders/
           file_format: json
+          require_version_id: true
+          checksum: sha256
+        non_cdc:
+          object_identity: [bucket, key, version_id]
+          verify_checksum: sha256
+          contract_fields:
+            order_id: integer
+            amount: decimal_2
+            status: string
+          on_unknown_field: hold_file_for_review
+          on_unrepairable_row: quarantine_row
+          self_heal:
+            approved_rules:
+              - field: amount
+                when: numeric_string_with_at_most_2_decimals
+                action: exact_decimal_cast
+          ai_advisory:
+            input: schema_metadata_only
+            auto_approve: false
         contract: contracts/orders/v1
         checkpoint: checkpoints/beacon/orders
         bronze_path: bronze/beacon/orders
